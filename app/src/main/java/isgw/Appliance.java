@@ -2,16 +2,17 @@ package isgw;
 
 import com.parse.ParseObject;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by vishal on 9/2/17 as a part of Charge 2.0.
  */
 
-public class Appliance {
+public class Appliance implements Serializable {
     private String name;
     private boolean status, allowed;
-    private int consumption;
+    private double consumption;
     private Date startTime, endTime;
     private ParseObject parseObject;
 
@@ -34,7 +35,7 @@ public class Appliance {
         this.allowed = allowed;
     }
 
-    public int getConsumption() {
+    public double getConsumption() {
         return consumption;
     }
 
@@ -54,7 +55,7 @@ public class Appliance {
         this.status = status;
     }
 
-    public void setConsumption(int consumption) {
+    public void setConsumption(double consumption) {
         this.consumption = consumption;
     }
 

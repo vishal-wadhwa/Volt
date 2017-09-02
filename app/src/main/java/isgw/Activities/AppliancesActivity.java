@@ -17,9 +17,17 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.pubnub.api.Callback;
+import com.pubnub.api.Pubnub;
+import com.pubnub.api.PubnubError;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import isgw.Appliance;
@@ -35,27 +43,23 @@ public class AppliancesActivity extends AppCompatActivity implements View.OnClic
     public static final String HEATER = "Heater";
     public static final String TELEVISION = "Television";
     public static final String REFRIGERATOR = "Refrigerator";
+    private int totalConsumption = 0;
 
-    private void loadRealtimeGraph() {
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction txn = manager.beginTransaction();
-        txn.add(R.id.real_graph_holder, new Realtime());
-        txn.commit();
-    }
+    private Pubnub pubnub;
 
     private final Handler mHandler = new Handler();
     private Runnable t1;
 
-    //
-    ImageView acIW;
-    ImageView fridgeIW;
-    ImageView tvIW;
-    ImageView heaterIW;
-    ImageView wmIW;
-    ImageView lightIW;
+    private ImageView acIW;
+    private ImageView fridgeIW;
+    private ImageView tvIW;
+    private ImageView heaterIW;
+    private ImageView wmIW;
+    private ImageView lightIW;
     private ProgressDialog pdg;
     private List<Appliance> applList;
     private static final String TAG = "ApplianceAct";
+    public static final HashMap<String, Double> consumptionMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,18 @@ public class AppliancesActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_appliances);
 
         getSupportActionBar().hide();
+
+        String publish = "pub-c-89e2ce34-7839-47ba-b9b7-3dbc30374038";
+        String subscribe = "sub-c-79a67ba4-4d07-11e7-a368-0619f8945a4f";
+        pubnub = new Pubnub(publish,subscribe);
+
+
+        consumptionMap.put(AIR_CONDITIONER, Realtime.kwhAC);
+        consumptionMap.put(REFRIGERATOR, Realtime.kwhRefr);
+        consumptionMap.put(WASHING_MACHINE, Realtime.kwhWashingM);
+        consumptionMap.put(TELEVISION, Realtime.kwhTV);
+        consumptionMap.put(HEATER, Realtime.kwhHeater);
+        consumptionMap.put(LIGHTING, Realtime.kwhLight);
 
         pdg = new ProgressDialog(this);
         pdg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -72,11 +88,6 @@ public class AppliancesActivity extends AppCompatActivity implements View.OnClic
         pdg.setMessage("Loading data...");
         pdg.setTitle("Please Wait...");
         pdg.show();
-
-        if (savedInstanceState == null) {
-            loadRealtimeGraph();
-        }
-
 
         acIW = (ImageView) findViewById(R.id.air_c);
         heaterIW = (ImageView) findViewById(R.id.heater);
@@ -94,16 +105,26 @@ public class AppliancesActivity extends AppCompatActivity implements View.OnClic
         fridgeIW.setOnClickListener(this);
 
         applList = new ArrayList<>();
-        Log.d(TAG, "onCreate: dddddd");
-        inflateData();
+        inflateData(savedInstanceState);
 
     }
 
-    void inflateData() {
+
+    private void loadRealtimeGraph(ArrayList<Appliance> applList) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction txn = manager.beginTransaction();
+        Bundle b = new Bundle();
+        b.putSerializable(Realtime.DEVICES, applList);
+        Realtime f = Realtime.getInstance(b);
+//        f.setArguments(b);
+        txn.replace(R.id.real_graph_holder, f);
+        txn.commit();
+    }
+
+    void inflateData(final Bundle savedInstanceState) {
         ParseQuery<ParseObject> pq = ParseQuery.getQuery("Appliances");
         pq.whereEqualTo("User", ParseUser.getCurrentUser());
 
-        Log.d(TAG, "inflateData: ");
         pq.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
@@ -113,7 +134,6 @@ public class AppliancesActivity extends AppCompatActivity implements View.OnClic
                     return;
                 }
 
-                Log.d(TAG, "done: complete");
                 for (ParseObject appliance : objects) {
 
                     String name = appliance.getString("Name");
@@ -123,12 +143,15 @@ public class AppliancesActivity extends AppCompatActivity implements View.OnClic
                     int consumption = appliance.getInt("Consumption");
                     boolean allowed = appliance.getBoolean("Allowed");
 
-                    applList.add(new Appliance(name, status, allowed, consumption, startTime, endTime, appliance));
-//                    assert applList.get(applList.size() - 1).getParseObject() != null;
-//                    Log.d(TAG, "done: " + applList.get(applList.size() - 1).getParseObject().toString());
+                    applList.add(new Appliance(name, status, allowed, 0, startTime, endTime, appliance));
                     changeImage(status, name);
 
+                    if (savedInstanceState == null) {
+                        loadRealtimeGraph((ArrayList<Appliance>) applList);
+                    }
                 }
+
+
             }
         });
     }
@@ -153,8 +176,54 @@ public class AppliancesActivity extends AppCompatActivity implements View.OnClic
                 else heaterIW.setImageResource(R.drawable.fireplace);
                 break;
             case LIGHTING:
-                if (!status) lightIW.setImageResource(R.drawable.bulbw);
-                else lightIW.setImageResource(R.drawable.bulb);
+                if (!status){
+                    lightIW.setImageResource(R.drawable.bulbw);
+
+                    Callback callback = new Callback() {
+                        public void successCallback(String channel, Object response) {
+                            Log.d("Check","working");
+                            System.out.println(response.toString());
+                        }
+                        public void errorCallback(String channel, PubnubError error) {
+                            Log.d("Check",error.toString());
+                            System.out.println(error.toString());
+                        }
+                    };
+                    JSONObject obj=new JSONObject();
+                    try {
+                        obj.put("led",1);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    JSONArray arr = new JSONArray();
+                    arr.put(obj);
+                    pubnub.publish("disco",obj, callback);
+
+                }
+                else{
+                    lightIW.setImageResource(R.drawable.bulb);
+
+                    Callback callback = new Callback() {
+                        public void successCallback(String channel, Object response) {
+                            Log.d("Check","working");
+                            System.out.println(response.toString());
+                        }
+                        public void errorCallback(String channel, PubnubError error) {
+                            Log.d("Check",error.toString());
+                            System.out.println(error.toString());
+                        }
+                    };
+                    JSONObject obj=new JSONObject();
+                    try {
+                        obj.put("led",0);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    JSONArray arr = new JSONArray();
+                    arr.put(obj);
+                    pubnub.publish("disco",obj, callback);
+
+                }
                 break;
             case REFRIGERATOR:
                 if (!status) fridgeIW.setImageResource(R.drawable.refbw);
