@@ -74,7 +74,7 @@ public class AppliancesActivity extends AppCompatActivity implements View.OnClic
         pdg.show();
 
         if (savedInstanceState == null) {
-            loadRealtimeGraph();
+            //loadRealtimeGraph();
         }
 
 
