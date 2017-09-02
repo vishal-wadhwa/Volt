@@ -17,6 +17,13 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.pubnub.api.Callback;
+import com.pubnub.api.Pubnub;
+import com.pubnub.api.PubnubError;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +45,7 @@ public class AppliancesActivity extends AppCompatActivity implements View.OnClic
     public static final String REFRIGERATOR = "Refrigerator";
     private int totalConsumption = 0;
 
+    private Pubnub pubnub;
 
     private final Handler mHandler = new Handler();
     private Runnable t1;
@@ -59,6 +67,11 @@ public class AppliancesActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_appliances);
 
         getSupportActionBar().hide();
+
+        String publish = "pub-c-89e2ce34-7839-47ba-b9b7-3dbc30374038";
+        String subscribe = "sub-c-79a67ba4-4d07-11e7-a368-0619f8945a4f";
+        pubnub = new Pubnub(publish,subscribe);
+
 
         consumptionMap.put(AIR_CONDITIONER, Realtime.kwhAC);
         consumptionMap.put(REFRIGERATOR, Realtime.kwhRefr);
@@ -163,8 +176,54 @@ public class AppliancesActivity extends AppCompatActivity implements View.OnClic
                 else heaterIW.setImageResource(R.drawable.fireplace);
                 break;
             case LIGHTING:
-                if (!status) lightIW.setImageResource(R.drawable.bulbw);
-                else lightIW.setImageResource(R.drawable.bulb);
+                if (!status){
+                    lightIW.setImageResource(R.drawable.bulbw);
+
+                    Callback callback = new Callback() {
+                        public void successCallback(String channel, Object response) {
+                            Log.d("Check","working");
+                            System.out.println(response.toString());
+                        }
+                        public void errorCallback(String channel, PubnubError error) {
+                            Log.d("Check",error.toString());
+                            System.out.println(error.toString());
+                        }
+                    };
+                    JSONObject obj=new JSONObject();
+                    try {
+                        obj.put("led",1);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    JSONArray arr = new JSONArray();
+                    arr.put(obj);
+                    pubnub.publish("disco",obj, callback);
+
+                }
+                else{
+                    lightIW.setImageResource(R.drawable.bulb);
+
+                    Callback callback = new Callback() {
+                        public void successCallback(String channel, Object response) {
+                            Log.d("Check","working");
+                            System.out.println(response.toString());
+                        }
+                        public void errorCallback(String channel, PubnubError error) {
+                            Log.d("Check",error.toString());
+                            System.out.println(error.toString());
+                        }
+                    };
+                    JSONObject obj=new JSONObject();
+                    try {
+                        obj.put("led",0);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    JSONArray arr = new JSONArray();
+                    arr.put(obj);
+                    pubnub.publish("disco",obj, callback);
+
+                }
                 break;
             case REFRIGERATOR:
                 if (!status) fridgeIW.setImageResource(R.drawable.refbw);
