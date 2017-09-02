@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<RelativeLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_rewards"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="isgw.Activities.RewardsActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView"
+        android:background="@color/Color_Gold" />
+
+    <ImageView
+        app:srcCompat="@drawable/usage"
+        android:id="@+id/imageView16"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp" />
+
+    <TextView
+        android:text="REWARDS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        android:layout_marginLeft="10dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Headline"
+        android:textSize="36sp"
+        android:textColor="@color/accent"
+        android:textStyle="normal|bold"
+        android:layout_marginBottom="26dp"
+        android:layout_alignBottom="@+id/imageView15"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="49dp" />
+
+    <ImageView
+        app:srcCompat="@drawable/ribbon"
+        android:id="@+id/imageView15"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:text="REWARDS"
+        android:textSize="24sp"
+        android:layout_marginTop="17dp"
+        android:layout_marginStart="47dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Current Usage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView5"
+        android:textSize="18sp"
+        android:layout_alignTop="@+id/imageView16"
+        android:layout_toEndOf="@+id/imageView16"
+        android:layout_marginStart="17dp"
+        android:textColor="@color/Color_DodgerBlue" />
+
+    <TextView
+        android:text="127.67 kW"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView8"
+        android:textSize="24sp"
+        android:layout_below="@+id/textView5"
+        android:layout_alignStart="@+id/textView5"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/Color_DarkBlue" />
+
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:id="@+id/limit"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/imageView16"
+        android:src="@drawable/limit"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="15dp" />
+
+    <TextView
+        android:text="Limit Usage"
+        android:layout_width="100dp"
+        android:id="@+id/textView14"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/limit"
+        android:layout_alignStart="@+id/textView12"
+        android:layout_marginTop="8dp"
+        android:textSize="18sp"
+        android:textColor="@color/Color_IndianRed" />
+
+    <TextView
+        android:text="140.00 kW"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView12"
+        android:textSize="24sp"
+        android:textColor="@color/Color_DarkRed"
+        android:layout_alignEnd="@+id/textView8"
+        android:layout_below="@+id/textView14"
+        android:paddingTop="4dp" />
+
+    <ImageView
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/textView12"
+        android:id="@+id/redlayer"
+        android:background="@color/Color_OrangeRed"
+        android:layout_marginTop="50dp"
+        android:layout_width="300dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/redlayer"
+        android:layout_marginTop="20dp"
+        android:id="@+id/integrate1">
+
+            <ImageView
+    android:layout_width="wrap_content"
+    android:layout_height="100dp"
+    android:src="@drawable/uber"
+    android:layout_weight="1"
+                android:id="@+id/uber"
+    />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:src="@drawable/paytm"
+            android:layout_weight="1"
+            android:id="@+id/paytm"/>
+
+
+    </LinearLayout>
+
+
+    <ImageView
+        app:srcCompat="@drawable/medal"
+        android:id="@+id/imageView21"
+        android:layout_width="40dp"
+        android:paddingBottom="4dp"
+        android:layout_height="50dp"
+        android:layout_alignTop="@+id/redlayer"
+        android:layout_alignEnd="@+id/imageView15" />
+
+    <TextView
+        android:text="1224"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView15"
+        android:paddingBottom="4dp"
+        android:paddingLeft="50dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Title"
+        android:textColor="@color/accent"
+        android:textSize="40sp"
+        android:layout_alignTop="@+id/redlayer"
+        android:layout_alignStart="@+id/imageView21" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/integrate1"
+        android:layout_marginTop="20dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:src="@drawable/desktop"
+            android:layout_weight="1"
+            android:id="@+id/paymentapp"
+            />
+
+
+
+    </LinearLayout>
+
+</RelativeLayout>
+</ScrollView>
