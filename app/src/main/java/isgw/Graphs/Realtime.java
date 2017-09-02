@@ -1,6 +1,5 @@
 package isgw.Graphs;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -23,7 +22,6 @@ import java.util.List;
 
 import isgw.Activities.AppliancesActivity;
 import isgw.Activities.ElectricityActivity;
-import isgw.Activities.GraphZoomActivity;
 import isgw.Appliance;
 import isgw.R;
 
@@ -86,21 +84,24 @@ public class Realtime extends android.support.v4.app.Fragment {
         View rView = inflater.inflate(R.layout.fragment_realtime, container, false);
         GraphView gView = (GraphView) rView.findViewById(R.id.graph);
         series1 = new LineGraphSeries<>();
+
         series1.setDrawDataPoints(true);
         series1.setDrawBackground(true);
+
+        series1.appendData(new DataPoint(0, 0), true, 30);
         gView.addSeries(series1);
 //        setGraphTitle(gView);
         gView.getViewport().setXAxisBoundsManual(true);
         gView.getViewport().setMinX(0);
         gView.getViewport().setMaxX(30);
-
+        gView.getViewport().setMaxY(10);
         gView.getGridLabelRenderer().setLabelVerticalWidth(100);
         if (getActivity() instanceof ElectricityActivity || getActivity() instanceof AppliancesActivity) {
             gView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(getContext(), GraphZoomActivity.class)
-                            .setAction(INTENT_ACTION));
+//                    startActivity(new Intent(getContext(), GraphZoomActivity.class)
+//                            .setAction(INTENT_ACTION));
                 }
             });
         } else {
@@ -150,7 +151,7 @@ public class Realtime extends android.support.v4.app.Fragment {
         t1 = new Runnable() {
             @Override
             public void run() {
-                lastXVal += 0.5;
+                lastXVal += 2;
                 updateConsumption();
                 mHandler.postDelayed(this, 15 * 1000);
             }
@@ -164,13 +165,17 @@ public class Realtime extends android.support.v4.app.Fragment {
 
         for (Appliance app : appList) {
             if (app.getStatus()) {
+
                 double calc = AppliancesActivity.consumptionMap.get(app.getName()) * 0.004166; //15sec in hours
                 app.setConsumption(app.getConsumption() + calc);
                 app.getParseObject().put("Consumption", app.getParseObject().getDouble("Consumption") + calc);
                 app.getParseObject().saveEventually();
                 totalCon += calc;
+
             }
         }
+        totalCon *= 1000;
+        Log.d(TAG, "updateConsumption: " + totalCon);
 
         series1.appendData(new DataPoint(lastXVal, totalCon), true, 30);
     }
@@ -201,103 +206,5 @@ public class Realtime extends android.support.v4.app.Fragment {
         mHandler.removeCallbacks(t1);
 
     }
-
-
-//    public class LiveRequestToParse extends AsyncTask<Void, Void, Void> {
-//
-//        ParseUser currUser = ParseUser.getCurrentUser();
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//
-//            totalConsum = 0;
-//            try {
-//                currUser = currUser.fetch();
-//            } catch (ParseException e) {
-//                e.printStackTrace();
-//            }
-//            String airconditioner = currUser.getString("Airconditioner");
-//            Log.d(TAG, "air::: " + airconditioner);
-//            if (airconditioner.equals("1")) {
-////                String timeUse = currUser.getString("timeStatus");
-//                if (currUser.getString("BtnAirconditioner").equals("1")) {
-//                    totalConsum += kwhAC;
-//                }
-//                Log.d(TAG, "aircond" + totalConsum);
-//            }
-////            currUser = ParseUser.getCurrentUser();
-//            String SmartMeter = "1";
-//            //currUser.getString("SmartMeter");
-//            if (SmartMeter.equals("1")) {
-////                String timeUse = currUser.getString("timeStatus");
-////                int time = Integer.parseInt(timeUse);
-////                            totalConsum += time * kwhSmartMeter;
-//                if (currUser.getString("SmartMeter").equals("1")) {
-//                    totalConsum += kwhSmartMeter;
-//                } else {
-//                    totalConsum = 0;
-//                }
-//            }
-//
-////            currUser = ParseUser.getCurrentUser();
-//            String Fridge = currUser.getString("Fridge");
-//            if (Fridge.equals("1")) {
-////                String timeUse = currUser.getString("timeStatus");
-////                int time = Integer.parseInt(timeUse);
-////                            totalConsum += time * kwhRefr;
-//                if (currUser.getString("BtnFridge").equals("1")) {
-//                    totalConsum += kwhRefr;
-//                }
-//                Log.d(TAG, "doInBackground: " + totalConsum);
-//            }
-//
-////            currUser = ParseUser.getCurrentUser();
-//            String Lighting = currUser.getString("Lighting");
-//            if (Lighting.equals("1")) {
-////                String timeUse = currUser.getString("timeStatus");
-////                int time = Integer.parseInt(timeUse);
-////                            totalConsum += time * kwhLight;
-//                if (currUser.getString("BtnLighting").equals("1")) {
-//
-//                    totalConsum += kwhLight;
-//                }
-//            }
-//
-////            currUser = ParseUser.getCurrentUser();
-//            String WashingMachine = currUser.getString("WashingMachine");
-//            if (WashingMachine.equals("1")) {
-////                String timeUse = currUser.getString("timeStatus");
-////                int time = Integer.parseInt(timeUse);
-////                            totalConsum += time * kwhWashingM;
-//                if (currUser.getString("BtnWashingM").equals("1")) {
-//                    totalConsum += kwhWashingM;
-//                }
-//            }
-//
-////            currUser = ParseUser.getCurrentUser();
-//            String TV = currUser.getString("TV");
-//            if (TV.equals("1")) {
-////                String timeUse = currUser.getString("timeStatus");
-////                int time = Integer.parseInt(timeUse);
-////                            totalConsum += time * kwhTV;
-//                if (currUser.getString("BtnTV").equals("1")) {
-//                    totalConsum += kwhTV;
-//                }
-//            }
-//
-//            String Heater = currUser.getString("Heater");
-//            if (Heater.equals("1")) {
-////                String timeUse = currUser.getString("timeStatus");
-////                int time = Integer.parseInt(timeUse);
-////                            totalConsum += time * kwhHeater;
-//                if (currUser.getString("BtnHeater").equals("1")) {
-//                    totalConsum += kwhHeater;
-//                }
-//            }
-//
-//            Log.d(TAG, "doInBackground: sjsj" + totalConsum);
-//
-//            return null;
-//        }
-//    }
 }
+
