@@ -12,6 +12,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
@@ -159,6 +163,17 @@ public class AccountActivity extends AppCompatActivity {
                     Log.d("CMD", command);
 
                     if (command.contains("on")){
+
+
+                        ParseQuery<ParseObject> pq  = ParseQuery.getQuery("Appliances");
+                        pq.whereEqualTo("Name","Lighting");
+                        pq.getFirstInBackground(new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject object, ParseException e) {
+                                object.put("Status",true);
+                                object.saveEventually();
+                            }
+                        });
                         Log.d("CMD", "ON");
                         Callback callback = new Callback() {
                             public void successCallback(String channel, Object response) {
@@ -181,6 +196,15 @@ public class AccountActivity extends AppCompatActivity {
                         pubnub.publish("disco",obj, callback);
                     }else if (command.contains("off")){
                         Log.d("CMD","OFF");
+                        ParseQuery<ParseObject> pq  = ParseQuery.getQuery("Appliances");
+                        pq.whereEqualTo("Name","Lighting");
+                        pq.getFirstInBackground(new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject object, ParseException e) {
+                                object.put("Status",false);
+                                object.saveEventually();
+                            }
+                        });
                         Callback callback = new Callback() {
                             public void successCallback(String channel, Object response) {
                                 Log.d("Check","working");

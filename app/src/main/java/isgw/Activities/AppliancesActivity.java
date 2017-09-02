@@ -46,7 +46,7 @@ public class AppliancesActivity extends AppCompatActivity implements View.OnClic
     private int totalConsumption = 0;
 
     private Pubnub pubnub;
-//private Pubnub pubnub;
+
     private final Handler mHandler = new Handler();
     private Runnable t1;
 
@@ -88,11 +88,6 @@ public class AppliancesActivity extends AppCompatActivity implements View.OnClic
         pdg.setMessage("Loading data...");
         pdg.setTitle("Please Wait...");
         pdg.show();
-
-        if (savedInstanceState == null) {
-           // loadRealtimeGraph(applList);
-        }
-
 
         acIW = (ImageView) findViewById(R.id.air_c);
         heaterIW = (ImageView) findViewById(R.id.heater);
