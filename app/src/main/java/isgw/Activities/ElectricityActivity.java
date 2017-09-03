@@ -176,15 +176,15 @@ public class ElectricityActivity extends AppCompatActivity {
                         PieEntry pe1 = new PieEntry((float) (object.getDouble("Total") - finalTcons), "Remaining");
                         PieDataSet pd = new PieDataSet(Arrays.asList(pe0, pe1), "");
 
-                        pd.setColors(Color.YELLOW, Color.GREEN);
+                        pd.setColors(Color.parseColor("#ffff8800"), Color.parseColor("#ff669900"));
                         PieData pieData = new PieData(pd);
-                        pieData.setValueTextColor(Color.BLACK);
-                        pieData.setValueTextSize(10);
+                        pieData.setValueTextColor(Color.WHITE);
+                        pieData.setValueTextSize(12);
 
                         Description dp = new Description();
                         dp.setText("");
                         pieChart.setDescription(dp);
-                        pieChart.setEntryLabelColor(Color.BLACK);
+//                        pieChart.setEntryLabelColor(Color.BLACK);
                         pieChart.setEntryLabelTextSize(10);
                         pieChart.setData(pieData);
                     }
