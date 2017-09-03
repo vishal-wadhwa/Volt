@@ -27,19 +27,18 @@
         <activity
             android:name="isgw.Activities.LoginActivity"
             android:theme="@style/AppTheme.Dark">
-
-        </activity>
-        <activity
-            android:name="isgw.Activities.SignupActivity"
-            android:theme="@style/AppTheme.Dark" />
-        <activity android:name="isgw.Activities.AccountActivity" />
-        <activity android:name="isgw.Activities.ElectricityActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="isgw.Activities.SignupActivity"
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name="isgw.Activities.AccountActivity">
+        </activity>
+        <activity android:name="isgw.Activities.ElectricityActivity" />
         <activity android:name="isgw.Activities.CarbonActivity" />
         <activity
             android:name="com.thefinestartist.finestwebview.FinestWebViewActivity"
