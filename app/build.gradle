@@ -43,5 +43,6 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:10.0.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
     compile 'com.pubnub:pubnub-android:3.7.10'
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
 }
 apply plugin: 'com.google.gms.google-services'
