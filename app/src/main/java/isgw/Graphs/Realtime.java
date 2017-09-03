@@ -153,7 +153,7 @@ public class Realtime extends android.support.v4.app.Fragment {
             public void run() {
                 lastXVal += 2;
                 updateConsumption();
-                mHandler.postDelayed(this, 15 * 1000);
+                mHandler.postDelayed(this, 5 * 1000);
             }
         };
         mHandler.postDelayed(t1, 0);
